@@ -625,6 +625,39 @@ header{
   .hero h1{text-shadow:2px 2px 0 var(--neo-blue-2)}
   .go{width:100%}
 }
+
+/* Spotify-inspired SVG music player */
+.music-player{position:fixed;left:14px;right:14px;bottom:14px;z-index:90;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:14px;padding:10px 12px;background:rgba(8,10,14,.96);color:#fff;border:2px solid #050505;box-shadow:8px 8px 0 #050505;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transform:translateY(calc(100% + 28px));opacity:0;pointer-events:none;transition:transform .35s cubic-bezier(.34,1.4,.64,1),opacity .25s ease}
+.music-player.is-ready{transform:translateY(0);opacity:1;pointer-events:auto}
+.music-cover{width:54px;height:54px;flex:none;border:2px solid #fff;background:#145cff center/cover no-repeat;display:grid;place-items:center;box-shadow:4px 4px 0 #145cff}
+.music-cover svg{width:22px;height:22px}
+.music-meta{min-width:0}
+.music-kicker{font:700 9px/1 JetBrains Mono,monospace;letter-spacing:.12em;text-transform:uppercase;color:#8b949e;margin-bottom:5px}
+.music-title{font:800 14px/1.15 Inter,system-ui,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.music-artist{font:500 11px/1.2 Inter,system-ui,sans-serif;color:#a7adb7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:3px}
+.music-controls{display:flex;align-items:center;gap:7px}
+.music-btn{width:34px;height:34px;border:2px solid #fff;background:#111;color:#fff;display:grid;place-items:center;cursor:pointer;transition:transform .15s,background .15s,color .15s;touch-action:manipulation}
+.music-btn:hover{background:#fff;color:#050505;transform:translateY(-2px)}
+.music-btn:active{transform:translate(2px,2px)}
+.music-btn.main{width:42px;height:42px;background:#fff;color:#050505;border-color:#fff}
+.music-btn.main:hover{background:var(--neo-blue,#145cff);color:#fff}
+.music-btn svg{width:17px;height:17px}
+.music-btn.main svg{width:19px;height:19px}
+.music-progress{position:absolute;left:12px;right:12px;bottom:-7px;height:4px;background:#343a40;border:1px solid #050505;cursor:pointer}
+.music-progress-fill{height:100%;width:0;background:var(--neo-blue,#145cff);transition:width .08s linear}
+.music-time{position:absolute;right:14px;top:-17px;font:700 8px/1 JetBrains Mono,monospace;color:#fff}
+.music-volume{display:flex;align-items:center;gap:5px;margin-left:3px}
+.music-volume input{width:72px;accent-color:var(--neo-blue,#145cff)}
+@media(max-width:600px){
+  .music-player{left:8px;right:8px;bottom:8px;grid-template-columns:auto 1fr;gap:11px;padding:9px 10px}
+  .music-cover{width:48px;height:48px}
+  .music-controls{grid-column:2;justify-content:flex-start;margin-top:-5px}
+  .music-btn{width:31px;height:31px}
+  .music-btn.main{width:38px;height:38px}
+  .music-volume{display:none}
+  .music-progress{left:10px;right:10px}
+}
+
 </style>
 <script>document.documentElement.classList.add('hld','lk');window._f=setTimeout(()=>document.documentElement.classList.remove('hld','lk'),12000)</script>
 </head>
@@ -677,6 +710,43 @@ header{
     </div>
 </div></div>
 </div></header>
+
+
+<!-- SVG-only Spotify-inspired player -->
+<section class="music-player" id="musicPlayer" aria-label="Music player">
+  <div class="music-cover" id="musicCover" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+      <path d="M9 18V5l10-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/>
+    </svg>
+  </div>
+  <div class="music-meta">
+    <div class="music-kicker">NOW PLAYING</div>
+    <div class="music-title" id="musicTitle">raaa music</div>
+    <div class="music-artist" id="musicArtist">Set a music URL with ra music</div>
+  </div>
+  <div class="music-controls">
+    <button class="music-btn" id="musicPrev" type="button" aria-label="Previous">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h2v14H6zM19 6.5v11L9 12z"/></svg>
+    </button>
+    <button class="music-btn main" id="musicPlay" type="button" aria-label="Play">
+      <svg id="musicPlayIcon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+    </button>
+    <button class="music-btn" id="musicNext" type="button" aria-label="Next">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 5h2v14h-2zM5 6.5l10 5.5-10 5.5z"/></svg>
+    </button>
+    <div class="music-volume">
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+        <path d="M4 10v4h4l5 4V6l-5 4z"/><path d="M16 9a4 4 0 0 1 0 6"/>
+      </svg>
+      <input id="musicVolume" type="range" min="0" max="1" step=".01" value=".8" aria-label="Volume">
+    </div>
+  </div>
+  <div class="music-progress" id="musicProgress" role="slider" aria-label="Music progress" tabindex="0">
+    <div class="music-progress-fill" id="musicProgressFill"></div>
+    <span class="music-time" id="musicTime">0:00 / 0:00</span>
+  </div>
+  <audio id="raaaAudio" preload="metadata"></audio>
+</section>
 
 <main>
   <div class="w hero">
@@ -916,10 +986,39 @@ addEventListener('keydown',e=>e.key==='Escape'&&close());
   const out=document.querySelector('#themeTerminalOut'),form=document.querySelector('#themeTerminalForm'),input=document.querySelector('#themeTerminal');
   const log=(line,cls='')=>{if(!out)return;const d=document.createElement('div');d.className=cls;d.textContent=line;out.appendChild(d);out.scrollTop=out.scrollHeight};
   const storeKey='raaa-live-settings';
-  const defaults={logo:'',modal:'qris.png',wa:'https://whatsapp.com/channel/0029VbDPWOjFMqrdmBdXu82R',tiktok:'https://www.tiktok.com/@ancklo',bg:''};
+  const defaults={logo:'',modal:'qris.png',wa:'https://whatsapp.com/channel/0029VbDPWOjFMqrdmBdXu82R',tiktok:'https://www.tiktok.com/@ancklo',bg:'',musicUrl:'',musicTitle:'raaa music',musicArtist:'Unknown artist',musicCover:''};
   let settings={...defaults},globalSettings={...defaults};
   try{settings={...settings,...JSON.parse(localStorage.getItem(storeKey)||'{}')}}catch{}
   const validUrl=v=>{try{const u=new URL(v,location.href);return ['http:','https:','data:'].includes(u.protocol)||v.startsWith('/')}catch{return false}};
+
+  const musicAudio=document.querySelector('#raaaAudio'),musicPlayer=document.querySelector('#musicPlayer');
+  const musicTitle=document.querySelector('#musicTitle'),musicArtist=document.querySelector('#musicArtist'),musicCover=document.querySelector('#musicCover');
+  const musicPrev=document.querySelector('#musicPrev'),musicNext=document.querySelector('#musicNext'),musicPlay=document.querySelector('#musicPlay'),musicPlayIcon=document.querySelector('#musicPlayIcon');
+  const musicProgress=document.querySelector('#musicProgress'),musicProgressFill=document.querySelector('#musicProgressFill'),musicTime=document.querySelector('#musicTime'),musicVolume=document.querySelector('#musicVolume');
+  const fmtTime=n=>{n=Number.isFinite(n)?Math.floor(n):0;return Math.floor(n/60)+':'+String(n%60).padStart(2,'0')};
+  const setPlayIcon=playing=>{if(!musicPlayIcon)return;musicPlayIcon.innerHTML=playing?'<path d="M7 5h4v14H7zM13 5h4v14h-4z"/>':'<path d="M8 5v14l11-7z"/>';musicPlay?.setAttribute('aria-label',playing?'Pause':'Play')};
+  const renderMusic=()=>{
+    if(!musicAudio)return;
+    const has=!!settings.musicUrl;
+    musicPlayer?.classList.toggle('is-ready',has);
+    if(musicTitle)musicTitle.textContent=settings.musicTitle||'raaa music';
+    if(musicArtist)musicArtist.textContent=settings.musicArtist||'Unknown artist';
+    if(musicCover)musicCover.style.backgroundImage=settings.musicCover?`url("${settings.musicCover.replace(/"/g,'')}")`:'';
+    if(has && musicAudio.src!==new URL(settings.musicUrl,location.href).href){musicAudio.src=settings.musicUrl;musicAudio.load()}
+    if(!has){musicAudio.pause();musicAudio.removeAttribute('src');setPlayIcon(false)}
+  };
+  musicPlay?.addEventListener('click',async()=>{if(!settings.musicUrl)return;try{if(musicAudio.paused)await musicAudio.play();else musicAudio.pause()}catch{}});
+  musicAudio?.addEventListener('play',()=>setPlayIcon(true));
+  musicAudio?.addEventListener('pause',()=>setPlayIcon(false));
+  musicAudio?.addEventListener('ended',()=>{musicAudio.currentTime=0;setPlayIcon(false)});
+  musicAudio?.addEventListener('loadedmetadata',()=>{if(musicTime)musicTime.textContent='0:00 / '+fmtTime(musicAudio.duration)});
+  musicAudio?.addEventListener('timeupdate',()=>{const p=musicAudio.duration?musicAudio.currentTime/musicAudio.duration:0;if(musicProgressFill)musicProgressFill.style.width=(p*100)+'%';if(musicTime)musicTime.textContent=fmtTime(musicAudio.currentTime)+' / '+fmtTime(musicAudio.duration)});
+  musicProgress?.addEventListener('click',e=>{if(!musicAudio.duration)return;const r=musicProgress.getBoundingClientRect();musicAudio.currentTime=Math.max(0,Math.min(1,(e.clientX-r.left)/r.width))*musicAudio.duration});
+  musicVolume?.addEventListener('input',e=>{musicAudio.volume=Number(e.target.value);localStorage.setItem('raaa-music-volume',e.target.value)});
+  try{musicAudio.volume=Number(localStorage.getItem('raaa-music-volume')??'.8');musicVolume.value=musicAudio.volume}catch{}
+  musicPrev?.addEventListener('click',()=>{if(musicAudio.duration)musicAudio.currentTime=0});
+  musicNext?.addEventListener('click',()=>{if(musicAudio.duration)musicAudio.currentTime=0;musicAudio.play().catch(()=>{})});
+
   const applySettings=save=>{
     const logo=document.querySelector('.logo .sq');
     if(logo){logo.style.backgroundImage=settings.logo?`url("${settings.logo.replace(/"/g,'')}")`:'';logo.style.backgroundSize='cover';logo.style.backgroundPosition='center';logo.style.backgroundRepeat='no-repeat';if(settings.logo)logo.innerHTML='';else logo.innerHTML='<svg width="20" height="20"><use href="#i-search"/></svg>'}
@@ -928,6 +1027,7 @@ addEventListener('keydown',e=>e.key==='Escape'&&close());
     const tt=document.querySelector('a[href*="tiktok.com/@ancklo"],a[data-global-link="tiktok"]');if(tt)tt.href=settings.tiktok;
     document.body.style.backgroundImage=settings.bg?`url("${settings.bg.replace(/"/g,'')}")`:'';
     document.body.style.backgroundSize=settings.bg?'cover':'';document.body.style.backgroundAttachment=settings.bg?'fixed':'';document.body.style.backgroundPosition=settings.bg?'center':'';
+    renderMusic();
     if(save)localStorage.setItem(storeKey,JSON.stringify(settings));
   };
   const pushGlobal=async(next)=>{
@@ -945,15 +1045,16 @@ addEventListener('keydown',e=>e.key==='Escape'&&close());
     settings={...globalSettings,...JSON.parse(localStorage.getItem(storeKey)||'{}')};
     applySettings(false);
   };
-  document.querySelectorAll('.theme-swatch').forEach(b=>b.addEventListener('click',()=>{const k=b.dataset.theme;setTheme(k);log('> ra theme '+k,'cmd');log('local theme applied: '+presets[k].name,'ok')}));
-  document.querySelector('#themeColor')?.addEventListener('input',e=>{setTheme(e.target.value);log('> ra color '+e.target.value,'cmd');log('local color applied','ok')});
+  document.querySelectorAll('.theme-swatch').forEach(b=>b.addEventListener('click',()=>{const k=b.dataset.theme;setTheme(k);log('> theme '+k,'cmd');log('local theme applied: '+presets[k].name,'ok')}));
+  document.querySelector('#themeColor')?.addEventListener('input',e=>{setTheme(e.target.value);log('> color '+e.target.value,'cmd');log('local color applied','ok')});
   form?.addEventListener('submit',async e=>{
     e.preventDefault();const raw=input.value.trim();if(!raw)return;log('> '+raw,'cmd');
     const parts=raw.split(/\s+/),cmd=parts.shift().toLowerCase(),arg=parts.join(' ').trim();
-    const scope=cmd==='ra'||cmd==='raa'?cmd:null;
-    const actual=scope?parts.shift()?.toLowerCase()||'':cmd;
-    const actualArg=scope?parts.join(' ').trim():arg;
-    const isGlobal=scope==='raa';
+    // Local commands use the command name directly: `logo`, `music`, `reset`.
+    // Global commands use only the `global` prefix: `global logo`, `global music`.
+    const isGlobal=cmd==='global';
+    const actual=isGlobal?(parts.shift()?.toLowerCase()||''):cmd;
+    const actualArg=isGlobal?parts.join(' ').trim():arg;
     const apply=async(key,value)=>{if(isGlobal){await setGlobal(key,value)}else setLocal(key,value)};
     try{
       if((actual==='theme'||actual==='color')&&(!isGlobal||isGlobal) && (actual==='theme'?presets[actualArg.toLowerCase()]:/^#[0-9a-f]{6}$/i.test(actualArg))){
@@ -965,14 +1066,49 @@ addEventListener('keydown',e=>e.key==='Escape'&&close());
       else if(actual==='link'){
         const p=actualArg.split(/\s+/),sub=(p.shift()||'').toLowerCase(),url=p.join(' ').trim();
         if((sub==='wa'||sub==='whatsapp'||sub==='tiktok')&&validUrl(url)){await apply(sub==='tiktok'?'tiktok':'wa',url);log((isGlobal?'global ':'')+sub+' link updated','ok')}
-        else log('usage: ra link wa <url> | ra link tiktok <url>','err')
+        else log('usage: link wa <url> | link tiktok <url>','err')
       }
       else if(actual==='background'&&(actualArg==='reset'||validUrl(actualArg))){await apply('bg',actualArg==='reset'?'':actualArg);log((isGlobal?'global ':'')+(actualArg==='reset'?'background reset':'background updated'),'ok')}
+      else if(actual==='music'){
+        const p=actualArg.split(/\s+/),sub=(p.shift()||'').toLowerCase(),value=p.join(' ').trim();
+        if((!sub||sub==='url')&&(value==='reset'||validUrl(value))){await apply('musicUrl',value==='reset'?'':value);log((isGlobal?'global ':'')+(value==='reset'?'music reset':'music URL updated'),'ok')}
+        else if(sub==='title'&&value){await apply('musicTitle',value);log((isGlobal?'global ':'')+'music title updated','ok')}
+        else if(sub==='artist'&&value){await apply('musicArtist',value);log((isGlobal?'global ':'')+'music artist updated','ok')}
+        else if(sub==='cover'&&(value==='reset'||validUrl(value))){await apply('musicCover',value==='reset'?'':value);log((isGlobal?'global ':'')+'music cover updated','ok')}
+        else log('usage: music <mp3-url> | music title <text> | music artist <text> | music cover <image-url>','err')
+      }
       else if(actual==='status'&&!isGlobal){log('scope: local');log('theme: '+(document.querySelector('#themeName')?.textContent||'unknown'));log('logo: '+(settings.logo?'custom':'default'));log('modal: '+(settings.modal?'custom/default':'none'));log('background: '+(settings.bg?'custom':'default'))}
       else if(actual==='clear'&&!isGlobal){out.innerHTML=''}
-      else if(actual==='reset'&&!isGlobal){setTheme('blue');settings={...defaults};applySettings(true);log('local settings reset','ok')}
-      else if(actual==='help'&&!isGlobal){log('ra theme blue | pink | purple | lime | orange');log('ra color #RRGGBB');log('ra logo <image-url> | ra logo reset');log('ra modal <image-url> | ra modal reset');log('ra link wa <url>');log('ra link tiktok <url>');log('ra background <image-url> | ra background reset');log('ra status | ra clear | ra reset')}
-      else log('command not found — type ra help','err')
+      else if(actual==='reset'){
+        // Reset ALWAYS clears both local and global customization, regardless of `ra`/`raa`.
+        localStorage.removeItem(storeKey);
+        localStorage.removeItem('raaa-theme');
+        localStorage.removeItem('raaa-global-theme');
+        settings={...defaults};
+        globalSettings={...defaults};
+        try{await pushGlobal({...defaults})}catch{}
+        setTheme('blue',false);
+        applySettings(false);
+        log('all settings reset — local + global','ok');
+      }
+      else if(actual==='help'&&!isGlobal){
+        log('theme blue | pink | purple | lime | orange');
+        log('color #RRGGBB');
+        log('logo <image-url> | logo reset');
+        log('modal <image-url> | modal reset');
+        log('link wa <url> | link tiktok <url>');
+        log('background <image-url> | background reset');
+        log('music <mp3-url> | music reset');
+        log('music title <text> | artist <text> | cover <image-url>');
+        log('status | clear | reset');
+        log('global logo <image-url> | global logo reset');
+        log('global modal <image-url> | global modal reset');
+        log('global link wa <url> | global link tiktok <url>');
+        log('global background <image-url> | global background reset');
+        log('global music <mp3-url> | global music reset');
+        log('global music title <text> | artist <text> | cover <image-url>');
+      }
+      else log('command not found — type help','err')
     }catch(err){log((isGlobal?'global ':'')+'update failed: '+err.message,'err')}
     input.value='';
   });
