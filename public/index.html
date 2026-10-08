@@ -246,19 +246,18 @@ body{
 .theme-custom{display:flex;align-items:center;gap:8px}
 .theme-custom label{font-size:10px;font-weight:700;flex:1}
 #themeColor{width:42px;height:32px;padding:0;border:2px solid #050505;background:#fff;cursor:pointer}
-.web-terminal{background:#090b0f;color:#e8edf2;border:2px solid #050505;border-radius:3px;box-shadow:6px 6px 0 #000;overflow:hidden;font-family:'JetBrains Mono',monospace;position:relative}
-.web-terminal-bar{height:34px;display:flex;align-items:center;gap:7px;padding:0 10px;border-bottom:2px solid #000;background:#171a20}
-.web-terminal-bar i{width:11px;height:11px;border:0;border-radius:50%;display:block;background:#ff5f56}
-.web-terminal-bar i:nth-child(2){background:#ffbd2e}.web-terminal-bar i:nth-child(3){background:#27c93f}
-.web-terminal-title{position:absolute;left:50%;transform:translateX(-50%);font-size:10px;color:#9ba4af;text-transform:none;letter-spacing:.2px}
-.web-terminal-out{height:108px;overflow:auto;padding:10px 11px;font-size:10px;line-height:1.65;scrollbar-width:thin}
-.web-terminal-out .ok{color:#4ade80}.web-terminal-out .cmd{color:#60a5fa}
-.web-terminal-out::-webkit-scrollbar{width:7px}.web-terminal-out::-webkit-scrollbar-thumb{background:#333;border-radius:0}
-.web-terminal-form{display:flex;align-items:center;border-top:1px solid #30343b;background:#090b0f;min-height:34px}
-.web-terminal-form span{padding:7px 0 7px 11px;color:#4ade80;font-weight:700;white-space:nowrap}
-#themeTerminal{min-width:0;flex:1;border:0;outline:0;background:transparent;color:#f1f5f9;padding:7px 7px;font:10px 'JetBrains Mono',monospace;caret-color:#4ade80}
-#themeTerminal::placeholder{color:#68717d}
-@media(min-width:700px){.theme-lab{padding:14px}.web-terminal-out{height:120px}}
+.web-terminal{background:#050505;color:#fff;border:2px solid #050505;border-radius:4px;box-shadow:5px 5px 0 var(--neo-blue);overflow:hidden;font-family:'JetBrains Mono',monospace}
+.web-terminal-bar{height:28px;display:flex;align-items:center;gap:6px;padding:0 8px;border-bottom:2px solid #fff;background:#111}
+.web-terminal-bar i{width:8px;height:8px;border:1px solid #fff;display:block}
+.web-terminal-title{margin-left:auto;font-size:9px;opacity:.7;text-transform:uppercase}
+.web-terminal-out{height:92px;overflow:auto;padding:8px;font-size:10px;line-height:1.55}
+.web-terminal-out .ok{color:var(--neo-blue-2)}
+.web-terminal-out .cmd{color:var(--neo-yellow)}
+.web-terminal-form{display:flex;border-top:2px solid #fff}
+.web-terminal-form span{padding:7px 7px;color:var(--neo-blue-2);font-weight:700}
+#themeTerminal{min-width:0;flex:1;border:0;outline:0;background:#050505;color:#fff;padding:7px 7px;font:10px 'JetBrains Mono',monospace}
+#themeTerminal::placeholder{color:#777}
+@media(min-width:700px){.theme-lab{padding:14px}.web-terminal-out{height:105px}}
 
 /* Terminal-inspired header */
 header{
@@ -671,9 +670,9 @@ header{
       </div>
       <div class="theme-custom"><label for="themeColor">CUSTOM PRIMARY</label><input id="themeColor" type="color" value="#145cff" aria-label="Pilih warna utama"></div>
       <div class="web-terminal" style="margin-top:10px">
-        <div class="web-terminal-bar"><i></i><i></i><i></i><span class="web-terminal-title">bash — raaa@web</span></div>
-        <div class="web-terminal-out" id="themeTerminalOut"><div class="ok">raaa@web:~$ help</div><div>theme · color · logo · modal · link · background · reset</div></div>
-        <form class="web-terminal-form" id="themeTerminalForm"><span>raaa@web:~$&nbsp;</span><input id="themeTerminal" autocomplete="off" spellcheck="false" placeholder="theme pink" aria-label="Perintah theme"></form>
+        <div class="web-terminal-bar"><i></i><i></i><i></i><span class="web-terminal-title">theme-terminal</span></div>
+        <div class="web-terminal-out" id="themeTerminalOut"><div class="ok">raaa@web:~$ help</div><div>ra theme · ra color · ra logo · ra modal · ra link · ra background · ra status · ra clear · ra reset</div></div>
+        <form class="web-terminal-form" id="themeTerminalForm"><span>&gt;_</span><input id="themeTerminal" autocomplete="off" spellcheck="false" placeholder="theme pink" aria-label="Perintah theme"></form>
       </div>
     </div>
 </div></div>
@@ -894,7 +893,7 @@ addEventListener('keydown',e=>e.key==='Escape'&&close());
 })();
 </script>
 <script>
-/* Live color/theme controller — browser only, no server/API changes. */
+/* Live theme/settings controller — `ra` is local, hidden `raa` is global. */
 (()=>{
   const root=document.documentElement;
   const presets={
@@ -918,38 +917,67 @@ addEventListener('keydown',e=>e.key==='Escape'&&close());
   const log=(line,cls='')=>{if(!out)return;const d=document.createElement('div');d.className=cls;d.textContent=line;out.appendChild(d);out.scrollTop=out.scrollHeight};
   const storeKey='raaa-live-settings';
   const defaults={logo:'',modal:'qris.png',wa:'https://whatsapp.com/channel/0029VbDPWOjFMqrdmBdXu82R',tiktok:'https://www.tiktok.com/@ancklo',bg:''};
-  let settings={...defaults};try{settings={...settings,...JSON.parse(localStorage.getItem(storeKey)||'{}')}}catch{}
+  let settings={...defaults},globalSettings={...defaults};
+  try{settings={...settings,...JSON.parse(localStorage.getItem(storeKey)||'{}')}}catch{}
   const validUrl=v=>{try{const u=new URL(v,location.href);return ['http:','https:','data:'].includes(u.protocol)||v.startsWith('/')}catch{return false}};
   const applySettings=save=>{
     const logo=document.querySelector('.logo .sq');
-    if(logo){logo.style.backgroundImage=settings.logo?`url(\"${settings.logo.replace(/\"/g,'')}\")`:'';logo.style.backgroundSize='cover';logo.style.backgroundPosition='center';logo.style.backgroundRepeat='no-repeat';if(settings.logo)logo.innerHTML='';else logo.innerHTML='<svg width=\"20\" height=\"20\"><use href=\"#i-search\"/></svg>'}
+    if(logo){logo.style.backgroundImage=settings.logo?`url("${settings.logo.replace(/"/g,'')}")`:'';logo.style.backgroundSize='cover';logo.style.backgroundPosition='center';logo.style.backgroundRepeat='no-repeat';if(settings.logo)logo.innerHTML='';else logo.innerHTML='<svg width="20" height="20"><use href="#i-search"/></svg>'}
     const qr=document.querySelector('.qr img');if(qr&&settings.modal)qr.src=settings.modal;
-    const links=document.querySelectorAll('a[href*=\"whatsapp.com/channel\"]');links.forEach(a=>a.href=settings.wa);
-    const tt=document.querySelector('a[href*=\"tiktok.com/@ancklo\"]');if(tt)tt.href=settings.tiktok;
-    document.body.style.backgroundImage=settings.bg?`url(\"${settings.bg.replace(/\"/g,'')}\")`:'';
+    const links=document.querySelectorAll('a[href*="whatsapp.com/channel"],a[data-global-link="whatsapp"]');links.forEach(a=>a.href=settings.wa);
+    const tt=document.querySelector('a[href*="tiktok.com/@ancklo"],a[data-global-link="tiktok"]');if(tt)tt.href=settings.tiktok;
+    document.body.style.backgroundImage=settings.bg?`url("${settings.bg.replace(/"/g,'')}")`:'';
     document.body.style.backgroundSize=settings.bg?'cover':'';document.body.style.backgroundAttachment=settings.bg?'fixed':'';document.body.style.backgroundPosition=settings.bg?'center':'';
     if(save)localStorage.setItem(storeKey,JSON.stringify(settings));
   };
-  document.querySelectorAll('.theme-swatch').forEach(b=>b.addEventListener('click',()=>{const k=b.dataset.theme;setTheme(k);log('> theme '+k,'cmd');log('theme applied: '+presets[k].name,'ok')}));
-  document.querySelector('#themeColor')?.addEventListener('input',e=>{setTheme(e.target.value);log('> color '+e.target.value,'cmd');log('custom color applied','ok')});
-  form?.addEventListener('submit',e=>{
+  const pushGlobal=async(next)=>{
+    const r=await fetch('/api/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(next)});
+    if(!r.ok)throw new Error('global settings API unavailable');
+    return await r.json();
+  };
+  const loadGlobal=async()=>{
+    try{const r=await fetch('/api/settings',{cache:'no-store'});if(r.ok)globalSettings={...defaults,...await r.json()};settings={...globalSettings,...JSON.parse(localStorage.getItem(storeKey)||'{}')};applySettings(false)}catch{}
+  };
+  const setLocal=(key,value)=>{settings[key]=value;applySettings(true)};
+  const setGlobal=async(key,value)=>{
+    const next={...globalSettings,[key]:value};
+    const saved=await pushGlobal(next);globalSettings={...defaults,...saved};
+    settings={...globalSettings,...JSON.parse(localStorage.getItem(storeKey)||'{}')};
+    applySettings(false);
+  };
+  document.querySelectorAll('.theme-swatch').forEach(b=>b.addEventListener('click',()=>{const k=b.dataset.theme;setTheme(k);log('> ra theme '+k,'cmd');log('local theme applied: '+presets[k].name,'ok')}));
+  document.querySelector('#themeColor')?.addEventListener('input',e=>{setTheme(e.target.value);log('> ra color '+e.target.value,'cmd');log('local color applied','ok')});
+  form?.addEventListener('submit',async e=>{
     e.preventDefault();const raw=input.value.trim();if(!raw)return;log('> '+raw,'cmd');
     const parts=raw.split(/\s+/),cmd=parts.shift().toLowerCase(),arg=parts.join(' ').trim();
-    if(cmd==='theme'&&presets[arg.toLowerCase()]){log('theme applied: '+setTheme(arg.toLowerCase()),'ok')}
-    else if(cmd==='color'&&/^#[0-9a-f]{6}$/i.test(arg)){setTheme(arg);log('custom color applied','ok')}
-    else if(cmd==='logo'&&(arg==='reset'||validUrl(arg))){settings.logo=arg==='reset'?'':arg;applySettings(true);log(arg==='reset'?'logo reset':'logo updated','ok')}
-    else if(cmd==='modal'&&(arg==='reset'||validUrl(arg))){settings.modal=arg==='reset'?defaults.modal:arg;applySettings(true);log('modal image updated','ok')}
-    else if(cmd==='link'&&parts.length>=1){const sub=(parts.shift()||'').toLowerCase(),url=parts.join(' ').trim();if((sub==='wa'||sub==='whatsapp'||sub==='tiktok')&&validUrl(url)){settings[sub==='tiktok'?'tiktok':'wa']=url;applySettings(true);log(sub+' link updated','ok')}else if(validUrl(sub)){settings.wa=sub;applySettings(true);log('channel link updated','ok')}else log('usage: link wa <url> | link tiktok <url>','err')}
-    else if(cmd==='background'&&(arg==='reset'||validUrl(arg))){settings.bg=arg==='reset'?'':arg;applySettings(true);log(arg==='reset'?'background reset':'background updated','ok')}
-    else if(cmd==='reset'){setTheme('blue');settings={...defaults};applySettings(true);log('all settings reset','ok')}
-    else if(cmd==='clear'){out.innerHTML=''}
-    else if(cmd==='status'){log('theme: '+(document.querySelector('#themeName')?.textContent||'unknown'));log('logo: '+(settings.logo?'custom':'default'));log('modal: '+(settings.modal?'custom/default':'none'));log('background: '+(settings.bg?'custom':'default'));}
-    else if(cmd==='help'||(cmd==='theme'&&!arg)){log('theme blue | pink | purple | lime | orange');log('color #RRGGBB');log('logo <image-url> | logo reset');log('modal <image-url> | modal reset');log('link wa <url>');log('link tiktok <url>');log('background <image-url> | background reset');log('status | clear | reset');}
-    else{log('command not found — type help','err')}
+    const scope=cmd==='ra'||cmd==='raa'?cmd:null;
+    const actual=scope?parts.shift()?.toLowerCase()||'':cmd;
+    const actualArg=scope?parts.join(' ').trim():arg;
+    const isGlobal=scope==='raa';
+    const apply=async(key,value)=>{if(isGlobal){await setGlobal(key,value)}else setLocal(key,value)};
+    try{
+      if((actual==='theme'||actual==='color')&&(!isGlobal||isGlobal) && (actual==='theme'?presets[actualArg.toLowerCase()]:/^#[0-9a-f]{6}$/i.test(actualArg))){
+        if(actual==='theme'){if(isGlobal){/* global visual theme remains local by design; save via separate theme key below */localStorage.setItem('raaa-global-theme',actualArg.toLowerCase());setTheme(actualArg.toLowerCase(),false)}else setTheme(actualArg.toLowerCase())}
+        else {setTheme(actualArg);if(!isGlobal)localStorage.setItem('raaa-theme',actualArg)}
+        log((isGlobal?'global':'local')+' '+actual+' applied','ok');
+      } else if(actual==='logo'&&(actualArg==='reset'||validUrl(actualArg))){await apply('logo',actualArg==='reset'?'':actualArg);log((isGlobal?'global ':'')+(actualArg==='reset'?'logo reset':'logo updated'),'ok')}
+      else if(actual==='modal'&&(actualArg==='reset'||validUrl(actualArg))){await apply('modal',actualArg==='reset'?defaults.modal:actualArg);log((isGlobal?'global ':'')+'modal updated','ok')}
+      else if(actual==='link'){
+        const p=actualArg.split(/\s+/),sub=(p.shift()||'').toLowerCase(),url=p.join(' ').trim();
+        if((sub==='wa'||sub==='whatsapp'||sub==='tiktok')&&validUrl(url)){await apply(sub==='tiktok'?'tiktok':'wa',url);log((isGlobal?'global ':'')+sub+' link updated','ok')}
+        else log('usage: ra link wa <url> | ra link tiktok <url>','err')
+      }
+      else if(actual==='background'&&(actualArg==='reset'||validUrl(actualArg))){await apply('bg',actualArg==='reset'?'':actualArg);log((isGlobal?'global ':'')+(actualArg==='reset'?'background reset':'background updated'),'ok')}
+      else if(actual==='status'&&!isGlobal){log('scope: local');log('theme: '+(document.querySelector('#themeName')?.textContent||'unknown'));log('logo: '+(settings.logo?'custom':'default'));log('modal: '+(settings.modal?'custom/default':'none'));log('background: '+(settings.bg?'custom':'default'))}
+      else if(actual==='clear'&&!isGlobal){out.innerHTML=''}
+      else if(actual==='reset'&&!isGlobal){setTheme('blue');settings={...defaults};applySettings(true);log('local settings reset','ok')}
+      else if(actual==='help'&&!isGlobal){log('ra theme blue | pink | purple | lime | orange');log('ra color #RRGGBB');log('ra logo <image-url> | ra logo reset');log('ra modal <image-url> | ra modal reset');log('ra link wa <url>');log('ra link tiktok <url>');log('ra background <image-url> | ra background reset');log('ra status | ra clear | ra reset')}
+      else log('command not found — type ra help','err')
+    }catch(err){log((isGlobal?'global ':'')+'update failed: '+err.message,'err')}
     input.value='';
   });
   const saved=localStorage.getItem('raaa-theme');if(saved&&(presets[saved]||/^#[0-9a-f]{6}$/i.test(saved)))setTheme(saved,false);
-  applySettings(false);
+  applySettings(false);loadGlobal();
 })();
 </script>
 </body>
